@@ -1,11 +1,11 @@
 package dummy;
 
-import com.big.instrumentation.spring.annotation.SherlogManaged;
+import com.big.watson.annotation.WatsonManaged;
 
 /**
  * Created by patrick.kleindienst on 22.06.2015.
  */
-@SherlogManaged
+@WatsonManaged
 public class DummyBean {
 
 	public void test() {

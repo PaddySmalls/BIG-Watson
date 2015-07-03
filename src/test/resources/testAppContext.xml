@@ -7,7 +7,7 @@
 
     <aop:aspectj-autoproxy expose-proxy="true"/>
 
-    <bean class="com.big.instrumentation.spring.aspect.AopProxyInitializer"/>
+    <bean class="com.big.watson.aspect.AopProxyInitializer"/>
 
 
 </beans>
