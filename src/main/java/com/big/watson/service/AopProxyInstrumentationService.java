@@ -82,6 +82,7 @@ public class AopProxyInstrumentationService {
 			}
 		});
 		return filteredAdvisors;
+
 	}
 
 	private InterceptorType getInterceptorTypeFromIndex(int interceptorIndex) {
