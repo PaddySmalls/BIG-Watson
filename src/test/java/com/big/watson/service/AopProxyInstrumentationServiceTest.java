@@ -36,8 +36,7 @@ import dummy.DummyBean;
 @PrepareForTest(SpringAdvisorBuilder.class)
 @PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {SpringTestContextConfiguration.class})
-public class AopProxyInstrumentationServiceTest
-{
+public class AopProxyInstrumentationServiceTest {
 
     @Autowired
     private AopProxyInstrumentationService classUnderTest;
@@ -62,8 +61,7 @@ public class AopProxyInstrumentationServiceTest
     // ###########################################################
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         advisedBeanServiceMock = mock(SpringAdvisedBeanService.class);
         when(advisedBeanServiceMock.getAdvisedBean(DummyBean.class)).thenReturn((Advised) dummyBean);
         classUnderTest.setAdvisedBeanService(advisedBeanServiceMock);
@@ -74,7 +72,8 @@ public class AopProxyInstrumentationServiceTest
         interceptorMock = mock(MethodInterceptor.class);
         advisorMock.setAdvice(interceptorMock);
 
-        BDDMockito.given(SpringAdvisorBuilder.buildPointcutAdvisor(getMethodFromDummyClass("test"), InterceptorType.PERFORMANCE)).willReturn(advisorMock);
+        BDDMockito.given(SpringAdvisorBuilder.buildPointcutAdvisor(getMethodFromDummyClass("test"), interceptorMock))
+                .willReturn(advisorMock);
     }
 
 
@@ -83,67 +82,28 @@ public class AopProxyInstrumentationServiceTest
     // ###########################################################
 
     @Test
-    public void testGetInterceptorTypeFromIndex()
-    {
-        InterceptorType result = null;
-        try
-        {
-            Method method = AopProxyInstrumentationService.class.getDeclaredMethod("getInterceptorTypeFromIndex", Integer.TYPE);
-            method.setAccessible(true);
-            result = (InterceptorType) method.invoke(classUnderTest, 0);
-        }
-        catch (NoSuchMethodException e)
-        {
-            e.printStackTrace();
-            fail("Could not find method for name: getInterceptorTypeFromIndex");
-        }
-        catch (InvocationTargetException e)
-        {
-            e.printStackTrace();
-            fail("Could not invoke method getInterceptorTypeFromIndex!");
-        }
-        catch (IllegalAccessException e)
-        {
-            e.printStackTrace();
-            fail("Failed to access method getInterceptorTypeFromIndex!");
-        }
-
-        assertThat(result, notNullValue());
-        assertThat(result, equalTo(InterceptorType.PERFORMANCE));
-    }
-
-    @Test
-    public void testConfigureBeanInstrumentation()
-    {
-        classUnderTest.configureBeanInstrumentation(DummyBean.class.getName(), "test", 0);
+    public void testConfigureBeanInstrumentation() {
+        classUnderTest.configureBeanInstrumentation(DummyBean.class.getName(), "test", interceptorMock);
         assertThat(isAdvisorApplied((Advised) dummyBean, advisorMock), equalTo(true));
     }
-
 
 
     // ###########################################################
     // # UTIL METHODS #
     // ###########################################################
 
-    private Method getMethodFromDummyClass(String methodName)
-    {
-        try
-        {
+    private Method getMethodFromDummyClass(String methodName) {
+        try {
             return DummyBean.class.getDeclaredMethod(methodName);
-        }
-        catch (NoSuchMethodException e)
-        {
+        } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private boolean isAdvisorApplied(Advised advised, Advisor advisor)
-    {
-        for (Advisor adv : advised.getAdvisors())
-        {
-            if (adv.equals(advisor))
-            {
+    private boolean isAdvisorApplied(Advised advised, Advisor advisor) {
+        for (Advisor adv : advised.getAdvisors()) {
+            if (adv.equals(advisor)) {
                 return true;
             }
         }

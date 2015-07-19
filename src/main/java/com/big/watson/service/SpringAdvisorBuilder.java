@@ -14,17 +14,17 @@ import com.big.watson.exception.NoSuchInterceptorException;
  */
 public class SpringAdvisorBuilder {
 
-	public static NameMatchMethodPointcutAdvisor buildPointcutAdvisor(Method method, InterceptorType interceptorType) {
-		NameMatchMethodPointcutAdvisor advisor = new NameMatchMethodPointcutAdvisor();
-		advisor.setMappedName(method.getName());
-		advisor.setAdvice(enumTypeToInterceptor(interceptorType));
-		return advisor;
-	}
+    public static NameMatchMethodPointcutAdvisor buildPointcutAdvisor(Method method, MethodInterceptor interceptor) {
+        NameMatchMethodPointcutAdvisor advisor = new NameMatchMethodPointcutAdvisor();
+        advisor.setMappedName(method.getName());
+        advisor.setAdvice(interceptor);
+        return advisor;
+    }
 
-	private static MethodInterceptor enumTypeToInterceptor(InterceptorType interceptorType) {
-		if (interceptorType.equals(InterceptorType.PERFORMANCE)) {
-			return new PerformanceMeasurementInterceptor();
-		}
-		throw new NoSuchInterceptorException();
-	}
+    private static MethodInterceptor enumTypeToInterceptor(InterceptorType interceptorType) {
+        if (interceptorType.equals(InterceptorType.PERFORMANCE)) {
+            return new PerformanceMeasurementInterceptor();
+        }
+        throw new NoSuchInterceptorException();
+    }
 }
