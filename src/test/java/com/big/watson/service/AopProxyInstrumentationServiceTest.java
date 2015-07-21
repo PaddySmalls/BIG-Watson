@@ -1,15 +1,12 @@
 package com.big.watson.service;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import com.big.watson.advice.InterceptorType;
-import com.big.watson.config.SpringTestContextConfiguration;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.big.watson.config.SpringTestContextConfiguration;
 import dummy.DummyBean;
 
 /**
@@ -35,118 +33,73 @@ import dummy.DummyBean;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(SpringAdvisorBuilder.class)
 @PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {SpringTestContextConfiguration.class})
-public class AopProxyInstrumentationServiceTest
-{
+@ContextConfiguration(classes = { SpringTestContextConfiguration.class })
+public class AopProxyInstrumentationServiceTest {
 
-    @Autowired
-    private AopProxyInstrumentationService classUnderTest;
+	@Autowired
+	private AopProxyInstrumentationService	classUnderTest;
 
+	// ###########################################################
+	// # DEPENDENCIES #
+	// ###########################################################
 
-    // ###########################################################
-    // # DEPENDENCIES #
-    // ###########################################################
+	@Autowired
+	private DummyBean						dummyBean;
 
-    @Autowired
-    private DummyBean dummyBean;
+	private SpringAdvisedBeanService		advisedBeanServiceMock;
 
-    private SpringAdvisedBeanService advisedBeanServiceMock;
+	private NameMatchMethodPointcutAdvisor	advisorMock;
 
-    private NameMatchMethodPointcutAdvisor advisorMock;
+	private MethodInterceptor				interceptorMock;
 
-    private MethodInterceptor interceptorMock;
+	// ###########################################################
+	// # BEFORE #
+	// ###########################################################
 
+	@Before
+	public void setUp() {
+		advisedBeanServiceMock = mock(SpringAdvisedBeanService.class);
+		when(advisedBeanServiceMock.getAdvisedBean(DummyBean.class)).thenReturn((Advised) dummyBean);
+		classUnderTest.setAdvisedBeanService(advisedBeanServiceMock);
 
-    // ###########################################################
-    // # BEFORE #
-    // ###########################################################
+		advisorMock = mock(NameMatchMethodPointcutAdvisor.class);
+		PowerMockito.mockStatic(SpringAdvisorBuilder.class);
 
-    @Before
-    public void setUp()
-    {
-        advisedBeanServiceMock = mock(SpringAdvisedBeanService.class);
-        when(advisedBeanServiceMock.getAdvisedBean(DummyBean.class)).thenReturn((Advised) dummyBean);
-        classUnderTest.setAdvisedBeanService(advisedBeanServiceMock);
+		interceptorMock = mock(MethodInterceptor.class);
+		advisorMock.setAdvice(interceptorMock);
 
-        advisorMock = mock(NameMatchMethodPointcutAdvisor.class);
-        PowerMockito.mockStatic(SpringAdvisorBuilder.class);
+		BDDMockito.given(SpringAdvisorBuilder.buildPointcutAdvisor(getMethodFromDummyClass("test"), interceptorMock)).willReturn(advisorMock);
+	}
 
-        interceptorMock = mock(MethodInterceptor.class);
-        advisorMock.setAdvice(interceptorMock);
+	// ###########################################################
+	// # UNIT TESTS #
+	// ###########################################################
 
-        BDDMockito.given(SpringAdvisorBuilder.buildPointcutAdvisor(getMethodFromDummyClass("test"), InterceptorType.PERFORMANCE)).willReturn(advisorMock);
-    }
+	@Test
+	public void testConfigureBeanInstrumentation() {
+		classUnderTest.configureBeanInstrumentation(DummyBean.class.getName(), "test", interceptorMock);
+		assertThat(isAdvisorApplied((Advised) dummyBean, advisorMock), equalTo(true));
+	}
 
+	// ###########################################################
+	// # UTIL METHODS #
+	// ###########################################################
 
-    // ###########################################################
-    // # UNIT TESTS #
-    // ###########################################################
+	private Method getMethodFromDummyClass(String methodName) {
+		try {
+			return DummyBean.class.getDeclaredMethod(methodName);
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
-    @Test
-    public void testGetInterceptorTypeFromIndex()
-    {
-        InterceptorType result = null;
-        try
-        {
-            Method method = AopProxyInstrumentationService.class.getDeclaredMethod("getInterceptorTypeFromIndex", Integer.TYPE);
-            method.setAccessible(true);
-            result = (InterceptorType) method.invoke(classUnderTest, 0);
-        }
-        catch (NoSuchMethodException e)
-        {
-            e.printStackTrace();
-            fail("Could not find method for name: getInterceptorTypeFromIndex");
-        }
-        catch (InvocationTargetException e)
-        {
-            e.printStackTrace();
-            fail("Could not invoke method getInterceptorTypeFromIndex!");
-        }
-        catch (IllegalAccessException e)
-        {
-            e.printStackTrace();
-            fail("Failed to access method getInterceptorTypeFromIndex!");
-        }
-
-        assertThat(result, notNullValue());
-        assertThat(result, equalTo(InterceptorType.PERFORMANCE));
-    }
-
-    @Test
-    public void testConfigureBeanInstrumentation()
-    {
-        classUnderTest.configureBeanInstrumentation(DummyBean.class.getName(), "test", 0);
-        assertThat(isAdvisorApplied((Advised) dummyBean, advisorMock), equalTo(true));
-    }
-
-
-
-    // ###########################################################
-    // # UTIL METHODS #
-    // ###########################################################
-
-    private Method getMethodFromDummyClass(String methodName)
-    {
-        try
-        {
-            return DummyBean.class.getDeclaredMethod(methodName);
-        }
-        catch (NoSuchMethodException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private boolean isAdvisorApplied(Advised advised, Advisor advisor)
-    {
-        for (Advisor adv : advised.getAdvisors())
-        {
-            if (adv.equals(advisor))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+	private boolean isAdvisorApplied(Advised advised, Advisor advisor) {
+		for (Advisor adv : advised.getAdvisors()) {
+			if (adv.equals(advisor)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

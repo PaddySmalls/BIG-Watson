@@ -18,13 +18,13 @@ public class SpringAdvisedBeanService {
 		this.springContextProvider = springContextProvider;
 	}
 
-	public <T extends Advised, S> T getAdvisedBean(Class<S> aClass)
+	public <T> Advised getAdvisedBean(Class<T> aClass)
 	{
-		S bean = springContextProvider.getBean(aClass);
-		T advisedBean = null;
+		T bean = springContextProvider.getBean(aClass);
+		Advised advisedBean = null;
 		try
 		{
-			advisedBean = (T) bean;
+			advisedBean = (Advised) bean;
 		}
 		catch (ClassCastException e)
 		{
