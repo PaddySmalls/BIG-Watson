@@ -1,6 +1,7 @@
 package com.big.watson.config;
 
 import com.big.watson.context.SpringContextProvider;
+import com.big.watson.demo.Student;
 import com.big.watson.jmx.SpringInstrumentationControllerMBean;
 import com.big.watson.service.AopProxyInstrumentationService;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
 import com.big.watson.service.SpringAdvisedBeanService;
+import org.springframework.context.annotation.Scope;
 import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.jmx.support.MBeanServerFactoryBean;
 
@@ -59,5 +61,12 @@ public class SpringInstrumentationConfig {
 		beans.put(SpringInstrumentationControllerMBean.CONTROLLER_MBEAN_NAME, controllerMBean);
 		mBeanExporter.setBeans(beans);
 		return mBeanExporter;
+	}
+
+	@Bean
+	@Scope(value = "prototype")
+	public Student student()
+	{
+		return new Student("Kalle");
 	}
 }
