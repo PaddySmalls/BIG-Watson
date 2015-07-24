@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.big.watson.annotation.WatsonManaged;
-import com.big.watson.config.SpringInstrumentationConfig;
+import com.big.watson.config.WatsonConfig;
 
 /**
  * Created by patrick.kleindienst on 23.06.2015.
@@ -17,7 +17,7 @@ import com.big.watson.config.SpringInstrumentationConfig;
 @WatsonManaged
 @Controller
 @EnableAutoConfiguration
-@Import(value = { SpringInstrumentationConfig.class })
+@Import(value = { WatsonConfig.class })
 public class SampleController {
 
 	@RequestMapping("/")

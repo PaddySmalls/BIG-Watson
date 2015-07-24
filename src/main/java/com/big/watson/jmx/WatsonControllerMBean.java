@@ -15,7 +15,8 @@ import java.util.List;
 /**
  * Created by patrick.kleindienst on 22.06.2015.
  */
-public class SpringInstrumentationControllerMBean {
+public class WatsonControllerMBean
+{
 
     public static final String CONTROLLER_MBEAN_NAME = "spring.watson:name=WatsonController";
 
@@ -24,7 +25,7 @@ public class SpringInstrumentationControllerMBean {
     private MethodInterceptor currentInterceptor;
 
     @Autowired
-    public SpringInstrumentationControllerMBean(AopProxyInstrumentationService instrumentationService) {
+    public WatsonControllerMBean(AopProxyInstrumentationService instrumentationService) {
         this.instrumentationService = instrumentationService;
         this.currentInterceptor = new PerformanceMeasurementInterceptor();
     }
@@ -33,21 +34,21 @@ public class SpringInstrumentationControllerMBean {
         instrumentationService.configureBeanInstrumentation(className, methodName, currentInterceptor);
     }
 
-    public List<String> listInterceptorsForBean(String beanClassName) {
+    public List<String> listAspectsForBean(String beanClassName) {
         List<String> adviceNames = new ArrayList<>();
         instrumentationService.getAllAdvicesForBean(beanClassName)
                 .forEach(advice -> adviceNames.add(advice.getClass().getName() + " [" + adviceNames.size() + "]"));
         return adviceNames;
     }
 
-    public String removeInterceptorsFromBean(String beanClassName, int index) {
+    public String removeAspectFromBean(String beanClassName, int index) {
         if (instrumentationService.removeAdvisorFromBean(beanClassName, index)) {
             return "Successfully removed interceptor with index [" + index + "]";
         }
         return "Interceptor was not found or could not be removed";
     }
 
-    public List<String> showAvailableInterceptors() {
+    public List<String> showAvailableAspects() {
         List<String> interceptorNames = new ArrayList<>();
         int interceptorIndex = 0;
         for (MethodInterceptor methodInterceptor : instrumentationService.getAvailableMethodInterceptors()) {
@@ -56,13 +57,12 @@ public class SpringInstrumentationControllerMBean {
         return interceptorNames;
     }
 
-    public String selectCurrentInterceptor(int index) throws MBeanException {
+    public String selectCurrentAspectType(int index) throws MBeanException {
         if (index >= 0 && index <= instrumentationService.getAvailableMethodInterceptors().size()) {
             currentInterceptor = WatsonUtils.setToList(instrumentationService.getAvailableMethodInterceptors()).get
                     (index);
             return "Current interceptor is: " + currentInterceptor.getClass().getSimpleName();
         }
         return "Index did not match a registered MethodInterceptor!";
-
     }
 }

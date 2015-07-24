@@ -1,6 +1,6 @@
 package com.big.watson.demo;
 
-import com.big.watson.config.SpringInstrumentationConfig;
+import com.big.watson.config.WatsonConfig;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
@@ -9,7 +9,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 public class PrototypeTest {
 
 	public static void main(String[] args) {
-		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(SpringInstrumentationConfig.class);
+		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(WatsonConfig.class);
 		Student student = applicationContext.getBean(Student.class);
 		System.out.println(student);
 		student = applicationContext.getBean(Student.class);

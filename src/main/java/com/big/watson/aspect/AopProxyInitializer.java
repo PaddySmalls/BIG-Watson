@@ -13,12 +13,10 @@ public class AopProxyInitializer {
 
 	@Pointcut("execution(public * *(..))")
 	public void publicMethod() {
-
 	}
 
 	@Pointcut("@within(com.big.watson.annotation.WatsonManaged)")
 	public void sherlogManaged() {
-
 	}
 
 	/*
