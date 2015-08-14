@@ -36,7 +36,7 @@ public class AopProxyInstrumentationService {
 
 			for (Method method : beanClass.getDeclaredMethods()) {
 				if (method.getName().equalsIgnoreCase(methodName)) {
-					advisedBean.addAdvisor(SpringAdvisorBuilder.buildPointcutAdvisor(method, interceptor));
+					advisedBean.addAdvisor(WatsonAdvisorBuilder.buildPointcutAdvisor(method, interceptor));
 				}
 			}
 

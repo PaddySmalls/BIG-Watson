@@ -8,7 +8,7 @@ import org.springframework.aop.support.NameMatchMethodPointcutAdvisor;
 /**
  * Created by patrick.kleindienst on 18.06.2015.
  */
-public class SpringAdvisorBuilder {
+public class WatsonAdvisorBuilder {
 
 	public static NameMatchMethodPointcutAdvisor buildPointcutAdvisor(Method method, MethodInterceptor interceptor) {
 		NameMatchMethodPointcutAdvisor advisor = new NameMatchMethodPointcutAdvisor();

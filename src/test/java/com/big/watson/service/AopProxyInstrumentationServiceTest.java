@@ -31,7 +31,7 @@ import dummy.DummyBean;
  */
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(SpringAdvisorBuilder.class)
+@PrepareForTest(WatsonAdvisorBuilder.class)
 @PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { SpringTestContextConfiguration.class })
 public class AopProxyInstrumentationServiceTest {
@@ -63,12 +63,12 @@ public class AopProxyInstrumentationServiceTest {
 		classUnderTest.setAdvisedBeanService(advisedBeanServiceMock);
 
 		advisorMock = mock(NameMatchMethodPointcutAdvisor.class);
-		PowerMockito.mockStatic(SpringAdvisorBuilder.class);
+		PowerMockito.mockStatic(WatsonAdvisorBuilder.class);
 
 		interceptorMock = mock(MethodInterceptor.class);
 		advisorMock.setAdvice(interceptorMock);
 
-		BDDMockito.given(SpringAdvisorBuilder.buildPointcutAdvisor(getMethodFromDummyClass("test"), interceptorMock)).willReturn(advisorMock);
+		BDDMockito.given(WatsonAdvisorBuilder.buildPointcutAdvisor(getMethodFromDummyClass("test"), interceptorMock)).willReturn(advisorMock);
 	}
 
 	// ###########################################################
