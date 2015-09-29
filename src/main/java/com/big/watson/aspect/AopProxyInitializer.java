@@ -28,6 +28,6 @@ public class AopProxyInitializer {
 
 	@Before("publicMethod() && sherlogManaged()")
 	public void showOutput() {
-
+		System.out.println();
 	}
 }
