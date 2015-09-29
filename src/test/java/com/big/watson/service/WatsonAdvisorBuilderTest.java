@@ -17,7 +17,8 @@ import com.big.watson.interceptor.PerformanceMeasurementInterceptor;
  * Created by patrick.kleindienst on 22.06.2015.
  */
 
-public class SpringAdvisorBuilderTest {
+public class WatsonAdvisorBuilderTest
+{
 
 	/*
 	 * Use dummy here objects for Method and AdviceType because Mockito can't
@@ -38,7 +39,7 @@ public class SpringAdvisorBuilderTest {
 
 	@Test
 	public void testBuildPointcutAdvisor() {
-		NameMatchMethodPointcutAdvisor advisor = SpringAdvisorBuilder.buildPointcutAdvisor(dummyMethod, dummyInterceptor);
+		NameMatchMethodPointcutAdvisor advisor = WatsonAdvisorBuilder.buildPointcutAdvisor(dummyMethod, dummyInterceptor);
 		assertThat(advisor.getPointcut().getMethodMatcher().matches(dummyMethod, null), equalTo(true));
 		assertThat(advisor.getAdvice(), notNullValue());
 	}

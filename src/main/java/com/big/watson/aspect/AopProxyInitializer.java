@@ -16,17 +16,17 @@ public class AopProxyInitializer {
 	}
 
 	@Pointcut("@within(com.big.watson.annotation.WatsonManaged)")
-	public void sherlogManaged() {
+	public void watsonManaged() {
 	}
 
 	/*
-	 * @Around("publicMethod() && sherlogManaged()") public Object
+	 * @Around("publicMethod() && watsonManaged()") public Object
 	 * showInstrumentationOutput(ProceedingJoinPoint joinPoint) { try { return
 	 * joinPoint.proceed(); } catch (Throwable throwable) {
 	 * throwable.printStackTrace(); } return null; }
 	 */
 
-	@Before("publicMethod() && sherlogManaged()")
+	@Before("publicMethod() && watsonManaged()")
 	public void showOutput() {
 		System.out.println();
 	}
